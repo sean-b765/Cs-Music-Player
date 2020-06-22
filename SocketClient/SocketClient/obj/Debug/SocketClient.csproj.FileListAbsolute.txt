@@ -1,0 +1,15 @@
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\SocketClient.csprojAssemblyReference.cache
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\SocketClient.Form1.resources
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\SocketClient.Properties.Resources.resources
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\SocketClient.csproj.GenerateResource.cache
+C:\Users\seany\source\repos\SocketClient\SocketClient\bin\Debug\SocketClient.exe.config
+C:\Users\seany\source\repos\SocketClient\SocketClient\bin\Debug\SocketClient.exe
+C:\Users\seany\source\repos\SocketClient\SocketClient\bin\Debug\SocketClient.pdb
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\SocketClient.exe
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\SocketClient.pdb
+C:\Users\seany\source\repos\SocketClient\SocketClient\bin\Debug\Interop.WMPLib.dll
+C:\Users\seany\source\repos\SocketClient\SocketClient\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\Interop.WMPLib.dll
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\SocketClient.csproj.ResolveComReference.cache
+C:\Users\seany\source\repos\SocketClient\SocketClient\obj\Debug\SocketClient.player.Player.resources
