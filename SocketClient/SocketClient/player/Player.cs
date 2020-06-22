@@ -12,6 +12,7 @@ using WMPLib;
 using SocketClient.player.algorithms;
 using SocketClient.player.comparators;
 using CsvHelper;
+using System.IO;
 
 /*
  * Player.cs - uses Windows Media Player (WMPLib) to play media files
@@ -27,9 +28,6 @@ namespace SocketClient.player
         {
             InitializeComponent();
         }
-
-        // CSVHelper writer
-        CsvParser csvWriter = default;
 
         List<Playlist> library = new List<Playlist>();
         Playlist selectedPlaylist = null;
@@ -707,12 +705,84 @@ namespace SocketClient.player
             }
         }
 
-        // Will export the playlists' and media objects' fields to a CSV file
-        private void BtnExport_Click(object sender, EventArgs e)
+        #region saving, loading, exporting
+        // Serialization
+        void Save()
         {
 
         }
 
+        // Deserialization
+        void LoadData()
+        {
 
+        }
+
+        // Will export the playlists' and media objects' fields to a CSV file
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (StreamWriter swPlaylist = new StreamWriter("playlists.csv"))
+                using (StreamWriter swMedia = new StreamWriter("media.csv"))
+                {
+                    using (var pWriter = new CsvWriter(swPlaylist, System.Globalization.CultureInfo.InvariantCulture))
+                    {
+                        // writing the playlists info
+                        //  start with field headers
+                        pWriter.WriteField("Id");
+                        pWriter.WriteField("Name");
+                        pWriter.WriteField("Size");
+                        
+                        pWriter.NextRecord();
+
+                        // iterate through each playlist and write a new CSV record
+                        foreach (Playlist playlist in library)
+                        {
+                            pWriter.WriteField(playlist.Id);
+                            pWriter.WriteField(playlist.Name);
+                            pWriter.WriteField(playlist.List.Count);
+
+                            pWriter.NextRecord();
+                        }
+                    }
+                    using (var mWriter = new CsvWriter(swMedia, System.Globalization.CultureInfo.InvariantCulture))
+                    {
+                        // writing media objects info
+                        mWriter.WriteField("Id");
+                        mWriter.WriteField("Title");
+                        mWriter.WriteField("Duration");
+                        mWriter.WriteField("Artist");
+                        mWriter.WriteField("Url");
+                        mWriter.WriteField("Playlist Id");
+                        mWriter.WriteField("Playlist Name");
+
+                        mWriter.NextRecord();
+
+                        // iterate through each playlist and then each Media object,
+                        //  write a new CSV record containing Media info
+                        foreach (Playlist playlist in library)
+                        {
+                            foreach (Media media in playlist.List)
+                            {
+                                mWriter.WriteField(media.Id);
+                                mWriter.WriteField(media.Title);
+                                mWriter.WriteField(media.DurationStr());
+                                mWriter.WriteField(media.Artist);
+                                mWriter.WriteField(media.Url);
+                                mWriter.WriteField(playlist.Id);
+                                mWriter.WriteField(playlist.Name);
+
+                                mWriter.NextRecord();
+                            }
+                        }
+                    }
+                }
+
+                MessageBox.Show("Saved to " + Path.GetFullPath("playlists.csv"));
+            }
+            catch (Exception) { }
+        }
+        #endregion
     }
 }
