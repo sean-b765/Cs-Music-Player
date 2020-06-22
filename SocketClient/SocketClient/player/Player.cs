@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using WMPLib;
 using SocketClient.player.algorithms;
 using SocketClient.player.comparators;
+using CsvHelper;
 
 /*
  * Player.cs - uses Windows Media Player (WMPLib) to play media files
@@ -26,6 +27,9 @@ namespace SocketClient.player
         {
             InitializeComponent();
         }
+
+        // CSVHelper writer
+        CsvParser csvWriter = default;
 
         List<Playlist> library = new List<Playlist>();
         Playlist selectedPlaylist = null;
@@ -666,8 +670,49 @@ namespace SocketClient.player
         //  iterate through the current playlist and check searchTerm against Title
         private void BinarySearch(string search)
         {
-            // sort the playlist by Title ascending prior to performing binary search
+            // sort the playlist by Title-ascending prior to performing binary search
+            mergeSort.Ascending = true;
+            CmbSorting.SelectedIndex = 0; // select sort by "Title"
+            UpdatePlaylist();
+
+            Media returnObj = null;
+            // perform iterative binary search
+
+            int low = 0, high = playlist.Count;
+            while (low <= high)
+            {
+                int middle = (low + high) / 2;
+                if (middle < playlist.Count)
+                {
+                    if (playlist.ElementAt(middle).Title.CompareTo(search) == 0)
+                    {
+                        // Found !
+                        returnObj = playlist.ElementAt(middle);
+                        // save the index of the found song to local variables
+                        low = high = middle;
+                        break;
+                    } else if (playlist.ElementAt(middle).Title.CompareTo(search) > 0)
+                    {
+                        high = middle - 1;
+                    } else
+                    {
+                        low = middle + 1;
+                    }
+                }
+            }
+            if (returnObj != null)
+            {
+                // found !
+                LstPlaylist.SelectedIndex = low;
+            }
+        }
+
+        // Will export the playlists' and media objects' fields to a CSV file
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
 
         }
+
+
     }
 }
