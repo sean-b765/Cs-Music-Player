@@ -13,6 +13,9 @@ using SocketClient.player.algorithms;
 using SocketClient.player.comparators;
 using CsvHelper;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
 
 /*
  * Player.cs - uses Windows Media Player (WMPLib) to play media files
@@ -69,6 +72,8 @@ namespace SocketClient.player
             LstPlaylist.DisplayMember = "Title";
 
             CmbSorting.SelectedIndex = 0;
+
+            LoadData();
         }
 
 
@@ -653,13 +658,60 @@ namespace SocketClient.player
         // Serialization
         void Save()
         {
+            // The data we need to save is:
+            //  List<Playlist> library
+            //  Playlist selectedPlaylist
 
+            // create object containing program stage
+            ProgramState programState = new ProgramState(library, selectedPlaylist);
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream("data.bin", FileMode.Create, FileAccess.Write);
+            // serialise the object
+            formatter.Serialize(stream, programState);
+            stream.Close();
         }
 
         // Deserialization
         void LoadData()
         {
+            try
+            {
+                IFormatter formatter = new BinaryFormatter();
+                Stream stream = new FileStream("data.bin", FileMode.Open, FileAccess.Read);
+                ProgramState programState = (ProgramState)formatter.Deserialize(stream);
 
+                // retrieve the objects
+                library = programState.Library;
+                selectedPlaylist = programState.SelectedPlaylist;
+                stream.Close();
+            } catch (FileNotFoundException)
+            {
+                return;
+            }
+
+            UpdateLibrary();
+
+            // go through playlist library
+            //  and try to find selected playlist
+            //   so we can select it programmatically
+            for (int i = 0; i < library.Count; i++)
+            {
+                if (LstLibrary.Items[i] == selectedPlaylist)
+                {
+                    LstLibrary.SelectedItem = LstLibrary.Items[i];
+                }
+            }
+        }
+
+        // Update LstLibrary 
+        private void UpdateLibrary()
+        {
+            LstLibrary.Items.Clear();
+            foreach (Playlist playlist in library)
+            {
+                LstLibrary.Items.Add(playlist);
+            }
         }
 
         // Will export the playlists' and media objects' fields to a CSV file
@@ -723,7 +775,9 @@ namespace SocketClient.player
                     }
                 }
 
-                MessageBox.Show("Saved to " + Path.GetFullPath("playlists.csv"));
+                DialogForm dForm = new DialogForm(Path.GetFullPath("playlists.csv")
+                                                + "\n\n" + Path.GetFullPath("media.csv"), "Successful Export");
+                dForm.ShowDialog();
             }
             catch (Exception) { }
         }
@@ -803,6 +857,12 @@ namespace SocketClient.player
                 BtnRepeat.Text = "Repeat";
                 repeat = true;
             }
+        }
+
+        // Save the program state (into data.bin) when form closes
+        private void Player_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Save();
         }
     }
 }

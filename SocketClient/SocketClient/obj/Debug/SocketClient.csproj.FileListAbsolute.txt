@@ -37,3 +37,4 @@ C:\Users\seany\source\repos\cs-Media-Player\SocketClient\SocketClient\obj\Debug\
 C:\Users\seany\source\repos\cs-Media-Player\SocketClient\SocketClient\obj\Debug\SocketClient.csproj.CopyComplete
 C:\Users\seany\source\repos\cs-Media-Player\SocketClient\SocketClient\obj\Debug\SocketClient.exe
 C:\Users\seany\source\repos\cs-Media-Player\SocketClient\SocketClient\obj\Debug\SocketClient.pdb
+C:\Users\seany\source\repos\cs-Media-Player\SocketClient\SocketClient\obj\Debug\SocketClient.player.DialogForm.resources

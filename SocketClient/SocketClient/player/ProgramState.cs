@@ -17,18 +17,16 @@ namespace SocketClient.player
         // Variables which need to be saved for client
         List<Playlist> library = new List<Playlist>();
         Playlist selectedPlaylist = null;
-        Media currentlyPlaying;
 
-        public ProgramState(List<Playlist> library, Playlist selected, Media currentMedia)
+        // Default Constructor
+        public ProgramState(List<Playlist> library, Playlist selected)
         {
             Library = library;
             SelectedPlaylist = selected;
-            CurrentlyPlaying = currentMedia;
         }
 
         // Encapsulation
         public List<Playlist> Library { get => library; set => library = value; }
         public Playlist SelectedPlaylist { get => selectedPlaylist; set => selectedPlaylist = value; }
-        public Media CurrentlyPlaying { get => currentlyPlaying; set => currentlyPlaying = value; }
     }
 }
