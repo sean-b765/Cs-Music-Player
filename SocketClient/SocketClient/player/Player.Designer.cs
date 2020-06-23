@@ -101,7 +101,6 @@
             this.LstPlaylist.Name = "LstPlaylist";
             this.LstPlaylist.Size = new System.Drawing.Size(305, 399);
             this.LstPlaylist.TabIndex = 3;
-            this.LstPlaylist.SelectedIndexChanged += new System.EventHandler(this.LstPlaylist_SelectedIndexChanged);
             this.LstPlaylist.DoubleClick += new System.EventHandler(this.LstPlaylist_DoubleClick);
             // 
             // contextMenu
