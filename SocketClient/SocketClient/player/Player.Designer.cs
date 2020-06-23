@@ -54,7 +54,6 @@
             this.BtnPlay = new System.Windows.Forms.Button();
             this.TxtSearch = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.LblStatus = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.wmPlayer)).BeginInit();
             this.SuspendLayout();
             // 
@@ -102,7 +101,6 @@
             this.LstPlaylist.Name = "LstPlaylist";
             this.LstPlaylist.Size = new System.Drawing.Size(305, 399);
             this.LstPlaylist.TabIndex = 3;
-            this.LstPlaylist.SelectedIndexChanged += new System.EventHandler(this.LstPlaylist_SelectedIndexChanged);
             this.LstPlaylist.DoubleClick += new System.EventHandler(this.LstPlaylist_DoubleClick);
             // 
             // contextMenu
@@ -373,24 +371,12 @@
             this.label4.TabIndex = 23;
             this.label4.Text = "Search:";
             // 
-            // LblStatus
-            // 
-            this.LblStatus.AutoSize = true;
-            this.LblStatus.BackColor = System.Drawing.Color.Transparent;
-            this.LblStatus.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LblStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.LblStatus.Location = new System.Drawing.Point(518, 64);
-            this.LblStatus.Name = "LblStatus";
-            this.LblStatus.Size = new System.Drawing.Size(0, 16);
-            this.LblStatus.TabIndex = 24;
-            // 
             // Player
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SlateGray;
             this.ClientSize = new System.Drawing.Size(809, 551);
-            this.Controls.Add(this.LblStatus);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.TxtSearch);
             this.Controls.Add(this.BtnPlay);
@@ -452,6 +438,5 @@
         private System.Windows.Forms.Button BtnPlay;
         private System.Windows.Forms.TextBox TxtSearch;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label LblStatus;
     }
 }

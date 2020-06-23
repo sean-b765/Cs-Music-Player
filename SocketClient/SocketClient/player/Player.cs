@@ -12,6 +12,7 @@ using WMPLib;
 using SocketClient.player.algorithms;
 using SocketClient.player.comparators;
 using CsvHelper;
+using System.IO;
 
 /*
  * Player.cs - uses Windows Media Player (WMPLib) to play media files
@@ -27,9 +28,6 @@ namespace SocketClient.player
         {
             InitializeComponent();
         }
-
-        // CSVHelper writer
-        CsvParser csvWriter = default;
 
         List<Playlist> library = new List<Playlist>();
         Playlist selectedPlaylist = null;
@@ -53,6 +51,8 @@ namespace SocketClient.player
 
         bool repeat = false;
 
+
+        // Form load initialisation
         private void Player_Load(object sender, EventArgs e)
         {
             TxtListItem.LostFocus += TxtListItem_LostFocus;
@@ -71,140 +71,24 @@ namespace SocketClient.player
             CmbSorting.SelectedIndex = 0;
         }
 
+
+        #region new playlist functionality
         // Adding Playlists
         private void BtnAddPlaylist_Click(object sender, EventArgs e)
         {
             ShowItemEditor(true);
         }
-        private void label1_Click(object sender, EventArgs e)
+        // Show the TextBox playlist editor when double clicking a playlist
+        private void LstLibrary_DoubleClick(object sender, EventArgs e)
         {
-            BtnAddPlaylist_Click(sender, e);
-        }
-
-        // Open filedialog to allow user to add multiple files to the playlist
-        private void BtnAddMedia_Click(object sender, EventArgs e)
-        {
+            // if the user double-clicked an actual playlist
             if (LstLibrary.SelectedIndex != -1)
             {
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        string[] files = openFileDialog.FileNames;
-                        foreach (string file in files)
-                        {
-                            // use IWMPMedia interface to extract media details
-                            IWMPMedia iwmp = wmPlayer.newMedia(file);
-                            // add the new Media object to playlist
-                            selectedPlaylist.Add(new Media(file)
-                            {
-                                Title = iwmp.name,
-                                Duration = iwmp.duration,
-                                Artist = iwmp.getItemInfo("Author")
-                            });
-                        }
-                    } catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-
-                    // update playlist listbox
-                    UpdatePlaylist();
-                }
-            }            
-        }
-
-        void PlayMedia(Media media)
-        {
-            currentlyPlaying = media;
-            media.Playing = true;
-
-            if (media.Artist == "")
-                LblMedia.Text = media.Title;
-            else
-                LblMedia.Text = media.Title + " by " + media.Artist;
-
-            wmPlayer.URL = media.Url;
-            wmPlayer.Ctlcontrols.play();
-        }
-
-        void PlayNext()
-        {
-            if (LstPlaylist.SelectedIndex != -1)
-            {
-                currentlyPlaying.Playing = false;
-                history.Push(currentlyPlaying);
-
-                if (LstPlaylist.SelectedIndex + 1 != LstPlaylist.Items.Count)
-                {
-                    LstPlaylist.SelectedIndex++;
-                    int mediaId = (int) LstPlaylist.SelectedValue;
-                    Media m = GetMediaFromListBoxValue(mediaId);
-                    PlayMedia(m);
-                } else
-                {
-                    LstPlaylist.SelectedIndex = 0;
-                    int mediaId = (int)LstPlaylist.SelectedValue;
-                    Media m = GetMediaFromListBoxValue(mediaId);
-                    PlayMedia(m);
-                }
-
+                ShowItemEditor(false);
             }
         }
-
-        // Update the playlist ListBox to show the media in the selectedPlaylist
-        void UpdatePlaylist()
-        {
-            // a new playlist was selected, or songs added
-            playlist.Clear();
-            LstPlaylist.DataSource = null;
-            // unbind the data source,
-            //  alter the data source
-            foreach (Media m in selectedPlaylist.List)
-            {
-                playlist.Add(m);
-            }
-            // sort the playlist if necessary
-            if (mergeSort != null)
-            {
-                // Update mergeSort ascending/comparer fields
-                UpdateSorter();
-                if (mergeSort.Comparer != null)
-                {
-                    Media[] tmp = playlist.ToArray();
-                    // sort
-                    mergeSort.sort(tmp, mergeSort.Comparer, mergeSort.Ascending);
-                    // add back into playlist List
-
-                    playlist.Clear();
-                    foreach (Media item in tmp)
-                    {
-                        playlist.Add(item);
-                    }
-                }
-            }
-
-            // and then rebind the data source
-            LstPlaylist.DataSource = playlist;
-        }
-
-        // Exists function to check for an already existing playlist
-        //  used to avoid duplicate playlists
-        bool PlaylistNameExists(string pname)
-        {
-            if (library.Count == 0)
-                return false;
-            foreach (Playlist p in library)
-            {
-                // if name equals, return true
-                if (p.Name == pname)
-                    return true;
-            }
-            return false;
-        }
-
-        // Will show the ListItem editor textbox,
-        //  will need to behave differently if a new playlist
+        // Will show the playlist name editor textbox,
+        //  needs to behave differently if a new playlist
         //  is being added, vs. an existing playlist being editted
         void ShowItemEditor(bool adding)
         {
@@ -220,7 +104,8 @@ namespace SocketClient.player
                 index = LstLibrary.Items.IndexOf(newPlaylist);
                 LstLibrary.SelectedIndex = index;
                 TxtListItem.Text = ((Playlist)LstLibrary.SelectedItem).Name;
-            } else
+            }
+            else
             {
                 // in here, we are editing an existing Listbox item
                 if (LstLibrary.SelectedIndex != -1)
@@ -245,7 +130,8 @@ namespace SocketClient.player
             TxtListItem.Focus();
             TxtListItem.Select(0, TxtListItem.Text.Length);
         }
-
+        // When user presses enter on the playlist editor,
+        //  lose focus and make changes
         private void TxtListItem_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -255,7 +141,7 @@ namespace SocketClient.player
         }
 
         // When the ListItem edit textbox loses focus, 
-        //  save changes to the selected listbox index
+        //  save changes to the selected playlist name
         private void TxtListItem_LostFocus(object sender, EventArgs e)
         {
             if (TxtListItem.Visible)
@@ -311,25 +197,20 @@ namespace SocketClient.player
                 }
             }
         }
-
-
-        // Show the Textbox item editor when double clicking a playlist
-        private void LstLibrary_DoubleClick(object sender, EventArgs e)
+        // Exists function to check for an already existing playlist
+        //  used to avoid duplicate playlists
+        bool PlaylistNameExists(string pname)
         {
-            // if the user double-clicked an actual playlist
-            if (LstLibrary.SelectedIndex != -1)
+            if (library.Count == 0)
+                return false;
+            foreach (Playlist p in library)
             {
-                ShowItemEditor(false);
+                // if name equals, return true
+                if (p.Name == pname)
+                    return true;
             }
+            return false;
         }
-
-        // Close this form
-        private void BtnExit_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-
         // Update selectedPlaylist on selected index changed
         private void LstLibrary_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -345,18 +226,127 @@ namespace SocketClient.player
                     }
                 }
                 UpdatePlaylist();
-            } else
+            }
+            else
             {
                 LblPlaylist.Text = "My Library";
             }
         }
+        #endregion new playlist functionality
 
+
+        #region adding media to playlist
+        // Open filedialog to allow user to add multiple files to the playlist
+        private void BtnAddMedia_Click(object sender, EventArgs e)
+        {
+            if (LstLibrary.SelectedIndex != -1)
+            {
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        string[] files = openFileDialog.FileNames;
+                        foreach (string file in files)
+                        {
+                            // use IWMPMedia interface to extract media details
+                            IWMPMedia iwmp = wmPlayer.newMedia(file);
+                            // add the new Media object to playlist
+                            selectedPlaylist.Add(new Media(file)
+                            {
+                                Title = iwmp.name,
+                                Duration = iwmp.duration,
+                                Artist = iwmp.getItemInfo("Author")
+                            });
+                        }
+                    } catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+
+                    // update playlist listbox
+                    UpdatePlaylist();
+                }
+            }            
+        }
+        // Update the playlist ListBox to show the media in the selectedPlaylist
+        void UpdatePlaylist()
+        {
+            // a new playlist was selected, or songs added
+            playlist.Clear();
+            LstPlaylist.DataSource = null;
+            // unbind the data source,
+            //  alter the data source
+            foreach (Media m in selectedPlaylist.List)
+            {
+                playlist.Add(m);
+            }
+            // sort the playlist if necessary
+            if (mergeSort != null)
+            {
+                // Update mergeSort ascending/comparer fields
+                UpdateSorter();
+                if (mergeSort.Comparer != null)
+                {
+                    Media[] tmp = playlist.ToArray();
+                    // sort
+                    mergeSort.sort(tmp, mergeSort.Comparer, mergeSort.Ascending);
+                    // add back into playlist List
+
+                    playlist.Clear();
+                    foreach (Media item in tmp)
+                    {
+                        playlist.Add(item);
+                    }
+                }
+            }
+
+            // and then rebind the data source
+            LstPlaylist.DataSource = playlist;
+        }
+        #endregion adding media to playlist
+
+
+        #region media navigation
+        void PlayMedia(Media media)
+        {
+            currentlyPlaying = media;
+            media.Playing = true;
+
+            if (media.Artist == "")
+                LblMedia.Text = media.Title;
+            else
+                LblMedia.Text = media.Title + " by " + media.Artist;
+
+            wmPlayer.URL = media.Url;
+            wmPlayer.Ctlcontrols.play();
+        }
+        // Called when repeat is true
+        //  will play next index
+        void PlayNext()
+        {
+            if (LstPlaylist.SelectedIndex != -1)
+            {
+                currentlyPlaying.Playing = false;
+                history.Push(currentlyPlaying);
+
+                if (LstPlaylist.SelectedIndex + 1 != LstPlaylist.Items.Count)
+                {
+                    LstPlaylist.SelectedIndex++;
+                    int mediaId = (int) LstPlaylist.SelectedValue;
+                    Media m = GetMediaFromListBoxValue(mediaId);
+                    PlayMedia(m);
+                } else
+                {
+                    LstPlaylist.SelectedIndex = 0;
+                    int mediaId = (int)LstPlaylist.SelectedValue;
+                    Media m = GetMediaFromListBoxValue(mediaId);
+                    PlayMedia(m);
+                }
+
+            }
+        }
         // Get the media object at the index,
         //  then play this media
-        private void LstPlaylist_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            
-        }
         private void LstPlaylist_DoubleClick(object sender, EventArgs e)
         {
             if (LstPlaylist.SelectedIndex != -1)
@@ -370,12 +360,109 @@ namespace SocketClient.player
                 }
             }
         }
+        // Stop the player if the queue is not empty, or if repeat is selected
+        //  otherwise, play from next song
+        private void BtnNext_Click(object sender, EventArgs e)
+        {
+            if (repeat || queue.Get().Count > 0)
+            {
+                wmPlayer.Ctlcontrols.stop();
+            }
+            else
+            {
+                PlayNext();
+            }
+        }
+        // Play from song history Stack
+        private void BtnPrevious_Click(object sender, EventArgs e)
+        {
+            if (history.Count > 0)
+            {
+                Media prev = history.Pop();
+
+                // need to match the previousMedia Id with the ListBox Item Value,
+                //    to set the selected item to the previous song
+                for (int i = 0; i < LstPlaylist.Items.Count; i++)
+                {
+                    Media item = LstPlaylist.Items[i] as Media;
+                    if (item.Id == prev.Id)
+                    {
+                        // set the selected index as we have found the song
+                        LstPlaylist.SelectedIndex = i;
+                        break;
+                    }
+                }
+                PlayMedia(prev);
+            }
+        }
+        // Play/Pause the song
+        private void BtnPlay_Click(object sender, EventArgs e)
+        {
+            if (wmPlayer.playState != WMPPlayState.wmppsPlaying)
+            {   // the player isn't playing at the moment
+                BtnPlay.Text = "Pause";
+                wmPlayer.Ctlcontrols.play();
+                // resume the player
+                if (selectedPlaylist != null && wmPlayer.URL == "")
+                {
+                    // start the player from the stopped status
+                    if (LstPlaylist.Items.Count > 0)
+                    {
+                        LstPlaylist.SelectedIndex = 0;
+                        int mediaId = (int)LstPlaylist.SelectedValue;
+                        Media m = GetMediaFromListBoxValue(mediaId);
+                        PlayMedia(m);
+                    }
+                }
+            }
+            else
+            {   // the player is currently playing
+                wmPlayer.Ctlcontrols.pause();
+                // pause the player
+                BtnPlay.Text = "Play";
+            }
+        }
+        #endregion media navigation
 
 
+        #region Form stuff
+        // Close this form
+        private void BtnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        // import user32dll to allow form to move with mouse
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+        private void Player_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
+
+        private void label1_MouseDown(object sender, MouseEventArgs e)
+        {
+            Player_MouseDown(sender, e);
+        }
+        #endregion Form stuff
+
+
+        #region playlist context menu
         ToolStripMenuItem enqueue = new ToolStripMenuItem();
         ToolStripMenuItem dequeue = new ToolStripMenuItem();
         ToolStripMenuItem remove = new ToolStripMenuItem();
-
+        
+        // When opening the context menu, 
+        //  change for the selected media
         private void contextMenu_Opening(object sender, CancelEventArgs e)
         {
             if (selectedPlaylist != null)
@@ -412,7 +499,6 @@ namespace SocketClient.player
 
             contextMenu.Items.Clear();
         }
-
         // Remove the selected media from the playlist
         private void Remove_Media(object sender, EventArgs e)
         {
@@ -433,10 +519,11 @@ namespace SocketClient.player
                     {
                         wmPlayer.Ctlcontrols.stop();
                     }
+                    // remove the selected media from playlist
+                    selectedPlaylist.Remove(media);
                 }
             }
         }
-
         // Adding to Queue
         private void Dequeue_Media(object sender, EventArgs e)
         {
@@ -473,133 +560,10 @@ namespace SocketClient.player
                 UpdateQueue();
             }
         }
+        #endregion playlist context menu
 
-        // Update Queue display
-        private void UpdateQueue()
-        {
-            // ListBox queue display method
-            LstQueue.Items.Clear();
-            foreach (Media media in queue.Queue)
-            {
-                LstQueue.Items.Add(media);
-            }
-        }
 
-        // Get media object from listbox Value. ListBox.SelectedValue = media.Id
-        Media GetMediaFromListBoxValue(int value)
-        {
-            for (int i = 0; i < selectedPlaylist.List.Count; i++)
-            {
-                Media media = selectedPlaylist.List.ElementAt(i);
-                if (media.Id == value)
-                {
-                    return media;
-                }
-            }
-            return null;
-        }
-
-        // import user32dll to allow form to move with mouse
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
-
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
-        private void Player_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
-        }
-
-        private void label1_MouseDown(object sender, MouseEventArgs e)
-        {
-            Player_MouseDown(sender, e);
-        }
-
-        // Stop the player if the queue is not empty, or if repeat is selected
-        //  otherwise, play from next song
-        private void BtnNext_Click(object sender, EventArgs e)
-        {
-            if (repeat || queue.Get().Count > 0)
-            {
-                wmPlayer.Ctlcontrols.stop();
-            } else
-            {
-                PlayNext();
-            }
-        }
-
-        // Play from song history Stack
-        private void BtnPrevious_Click(object sender, EventArgs e)
-        {
-            if (history.Count > 0)
-            {
-                Media prev = history.Pop();
-
-                // need to match the previousMedia Id with the ListBox Item Value,
-                //    to set the selected item to the previous song
-                for (int i = 0; i < LstPlaylist.Items.Count; i++)
-                {
-                    Media item = LstPlaylist.Items[i] as Media;
-                    if (item.Id == prev.Id)
-                    {
-                        // set the selected index as we have found the song
-                        LstPlaylist.SelectedIndex = i;
-                        break;
-                    } 
-                }
-                PlayMedia(prev);
-            }
-        }
-
-        // Status changed event
-        private void wmPlayer_StatusChange(object sender, EventArgs e)
-        {
-            if (wmPlayer.playState == WMPPlayState.wmppsPlaying)
-            {
-                // the player is playing
-            } else if (wmPlayer.playState == WMPPlayState.wmppsStopped)
-            {
-                // the player has stopped
-                //  add the currentlyplaying to song history Stack
-                currentlyPlaying.Playing = false;
-                history.Push(currentlyPlaying);
-
-                // if the queue is not empty, play from queue
-                if (queue.Get().Count > 0)
-                {
-                    PlayMedia(queue.Pop());
-                    // update the queue
-                    UpdateQueue();
-                } else
-                {
-                    // play next song in playlist IF the repeat button is selected
-                    if (repeat)
-                    {
-                        PlayNext();
-                    }
-                }
-            }
-        }
-
-        private void BtnRepeat_Click(object sender, EventArgs e)
-        {
-            if (repeat)
-            {
-                BtnRepeat.Text = "Repeating";
-                repeat = false;
-            } else
-            {
-                BtnRepeat.Text = "Repeat";
-                repeat = true;
-            }
-        }
-
+        #region sorting, searching
         // Updates the sorting configuration based on ComboBox and Ascending/Descending 
         private void BtnSort_Click(object sender, EventArgs e)
         {
@@ -627,31 +591,7 @@ namespace SocketClient.player
                 mergeSort.Comparer = new SortByArtist();
         }
 
-        private void BtnPlay_Click(object sender, EventArgs e)
-        {
-            if (wmPlayer.playState != WMPPlayState.wmppsPlaying)
-            {   // the player isn't playing at the moment
-                BtnPlay.Text = "Pause";
-                wmPlayer.Ctlcontrols.play();
-                // resume the player
-                if (selectedPlaylist != null && wmPlayer.URL == "")
-                {
-                    // start the player from the stopped status
-                    if (LstPlaylist.Items.Count > 0)
-                    {
-                        LstPlaylist.SelectedIndex = 0;
-                        int mediaId = (int)LstPlaylist.SelectedValue;
-                        Media m = GetMediaFromListBoxValue(mediaId);
-                        PlayMedia(m);
-                    }
-                }
-            } else
-            {   // the player is currently playing
-                wmPlayer.Ctlcontrols.pause();
-                // pause the player
-                BtnPlay.Text = "Play";
-            }
-        }
+        
 
         // handle keyDown events here and detect 
         private void TxtSearch_KeyDown(object sender, KeyEventArgs e)
@@ -706,13 +646,163 @@ namespace SocketClient.player
                 LstPlaylist.SelectedIndex = low;
             }
         }
+        #endregion sorting, searching
 
-        // Will export the playlists' and media objects' fields to a CSV file
-        private void BtnExport_Click(object sender, EventArgs e)
+
+        #region saving, loading, exporting
+        // Serialization
+        void Save()
         {
 
         }
 
+        // Deserialization
+        void LoadData()
+        {
 
+        }
+
+        // Will export the playlists' and media objects' fields to a CSV file
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (StreamWriter swPlaylist = new StreamWriter("playlists.csv"))
+                using (StreamWriter swMedia = new StreamWriter("media.csv"))
+                {
+                    using (var pWriter = new CsvWriter(swPlaylist, System.Globalization.CultureInfo.InvariantCulture))
+                    {
+                        // writing the playlists info
+                        //  start with field headers
+                        pWriter.WriteField("Id");
+                        pWriter.WriteField("Name");
+                        pWriter.WriteField("Size");
+                        
+                        pWriter.NextRecord();
+
+                        // iterate through each playlist and write a new CSV record
+                        foreach (Playlist playlist in library)
+                        {
+                            pWriter.WriteField(playlist.Id);
+                            pWriter.WriteField(playlist.Name);
+                            pWriter.WriteField(playlist.List.Count);
+
+                            pWriter.NextRecord();
+                        }
+                    }
+                    using (var mWriter = new CsvWriter(swMedia, System.Globalization.CultureInfo.InvariantCulture))
+                    {
+                        // writing media objects info
+                        mWriter.WriteField("Id");
+                        mWriter.WriteField("Title");
+                        mWriter.WriteField("Duration");
+                        mWriter.WriteField("Artist");
+                        mWriter.WriteField("Url");
+                        mWriter.WriteField("Playlist Id");
+                        mWriter.WriteField("Playlist Name");
+
+                        mWriter.NextRecord();
+
+                        // iterate through each playlist and then each Media object,
+                        //  write a new CSV record containing Media info
+                        foreach (Playlist playlist in library)
+                        {
+                            foreach (Media media in playlist.List)
+                            {
+                                mWriter.WriteField(media.Id);
+                                mWriter.WriteField(media.Title);
+                                mWriter.WriteField(media.DurationStr());
+                                mWriter.WriteField(media.Artist);
+                                mWriter.WriteField(media.Url);
+                                mWriter.WriteField(playlist.Id);
+                                mWriter.WriteField(playlist.Name);
+
+                                mWriter.NextRecord();
+                            }
+                        }
+                    }
+                }
+
+                MessageBox.Show("Saved to " + Path.GetFullPath("playlists.csv"));
+            }
+            catch (Exception) { }
+        }
+        #endregion
+
+
+        // Update Queue listbox
+        private void UpdateQueue()
+        {
+            // ListBox queue display method
+            LstQueue.Items.Clear();
+            foreach (Media media in queue.Queue)
+            {
+                LstQueue.Items.Add(media);
+            }
+        }
+
+        // Get media object from listbox Value. ListBox.SelectedValue = media.Id
+        Media GetMediaFromListBoxValue(int value)
+        {
+            for (int i = 0; i < selectedPlaylist.List.Count; i++)
+            {
+                Media media = selectedPlaylist.List.ElementAt(i);
+                if (media.Id == value)
+                {
+                    return media;
+                }
+            }
+            return null;
+        }
+
+        // Status changed event
+        //  when stopped,   if queue isnt empty, play
+        //                  if repeat is selected, play next song
+        private void wmPlayer_StatusChange(object sender, EventArgs e)
+        {
+            if (wmPlayer.playState == WMPPlayState.wmppsPlaying)
+            {
+                // the player is playing
+            }
+            else if (wmPlayer.playState == WMPPlayState.wmppsStopped)
+            {
+                // the player has stopped
+                //  add the currentlyplaying to song history Stack
+                currentlyPlaying.Playing = false;
+                history.Push(currentlyPlaying);
+
+                // if the queue is not empty, play from queue
+                if (queue.Get().Count > 0)
+                {
+                    PlayMedia(queue.Pop());
+                    // update the queue
+                    UpdateQueue();
+                }
+                else
+                {
+                    // play next song in playlist IF the repeat button is selected
+                    if (repeat)
+                    {
+                        PlayNext();
+                    }
+                }
+            }
+        }
+
+        // Repeat the playlist,
+        //  or only play single media at a time
+        private void BtnRepeat_Click(object sender, EventArgs e)
+        {
+            if (repeat)
+            {
+                BtnRepeat.Text = "Repeating";
+                repeat = false;
+            }
+            else
+            {
+                BtnRepeat.Text = "Repeat";
+                repeat = true;
+            }
+        }
     }
 }
