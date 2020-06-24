@@ -4,6 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * RegisteredClient.cs
+ * 30010353
+ */
+
 namespace SocketServer.clients
 {
     class RegisteredClient : Client

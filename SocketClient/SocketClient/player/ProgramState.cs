@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 /*
  * ProgramState.cs
- *  contains all data to serialize, in one object
+ *  contains all data to serialize on Player close, in one object
  */
 
 namespace SocketClient.player

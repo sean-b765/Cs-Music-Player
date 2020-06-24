@@ -4,6 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * SortByDuration.cs - custom Duration comparer
+ * 30010353
+ */
+
 namespace SocketClient.player.comparators
 {
     class SortByDuration : IComparer<Media>
