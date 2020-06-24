@@ -7,3 +7,12 @@ C:\Users\seany\source\repos\SocketServer\SocketServer\obj\Debug\SocketServer.Pro
 C:\Users\seany\source\repos\SocketServer\SocketServer\obj\Debug\SocketServer.csproj.GenerateResource.cache
 C:\Users\seany\source\repos\SocketServer\SocketServer\obj\Debug\SocketServer.exe
 C:\Users\seany\source\repos\SocketServer\SocketServer\obj\Debug\SocketServer.pdb
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\bin\Debug\SocketServer.exe.config
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\bin\Debug\SocketServer.exe
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\bin\Debug\SocketServer.pdb
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\obj\Debug\SocketServer.csprojAssemblyReference.cache
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\obj\Debug\SocketServer.Form1.resources
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\obj\Debug\SocketServer.Properties.Resources.resources
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\obj\Debug\SocketServer.csproj.GenerateResource.cache
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\obj\Debug\SocketServer.exe
+C:\Users\seany\source\repos\cs-Media-Player\SocketServer\SocketServer\obj\Debug\SocketServer.pdb

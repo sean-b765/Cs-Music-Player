@@ -4,6 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * SortByTitle.cs - custom Title comparer
+ * 30010353
+ */
+
 namespace SocketClient.player.comparators
 {
     class SortByTitle : IComparer<Media>

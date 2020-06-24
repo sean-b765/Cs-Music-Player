@@ -97,6 +97,8 @@ namespace SocketServer
             }
         }
 
+        // Listen for incoming socket connections,
+        //  send these socket connections to new SocketClient thread to allow multiple clients
         public void Listen()
         {
             // Place socket in listening state,

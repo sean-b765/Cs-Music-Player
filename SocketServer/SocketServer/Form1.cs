@@ -37,6 +37,7 @@ namespace SocketServer
         private void Form1_Load(object sender, EventArgs e)
         {  }
 
+        // Start the server thread
         private void BtnStart_Click(object sender, EventArgs e)
         {
             if (int.TryParse(TxtPort.Text, out int port))
@@ -107,6 +108,8 @@ namespace SocketServer
         {
             LstLog.Items.Add("+ Client connected");
         }
+        // End Client Connected.
+
 
         // Client Disconnected
         private void Server_ClientDisconnected(Client client)
@@ -118,6 +121,8 @@ namespace SocketServer
             LstLog.Items.Add("- Client disconnected");
             UpdateFormUI();
         }
+        // End Client Disconnected
+
 
         // Message Received by Client
         private void Server_MessageReceived(string message)
@@ -128,7 +133,10 @@ namespace SocketServer
         {
             LstLog.Items.Add(message);
         }
+        // End Message Received by Client
 
+
+        // On form close event, unassign events
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             try

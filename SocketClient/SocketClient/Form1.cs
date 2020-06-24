@@ -37,6 +37,7 @@ namespace SocketClient
             ShowControls();
         }
 
+        // Connect to the server
         private void BtnConnect_Click(object sender, EventArgs e)
         {
             try
@@ -61,6 +62,9 @@ namespace SocketClient
             }
         }
 
+        // Initialise socket,
+        //  after connecting to the socket, start the Read() thread which 
+        //  will display messages from server
         void Connect()
         {
             IPAddress ip = IPAddress.Parse(TxtHost.Text);
@@ -105,6 +109,7 @@ namespace SocketClient
             }
         }
 
+        // Send server a login request containing user credentials
         private void BtnLogin_Click(object sender, EventArgs e)
         {
             // send a login request
@@ -134,12 +139,16 @@ namespace SocketClient
             }
         }
 
+
+        // Display Message Received
         private void Form1_MessageReceived(string message)
         {
             Invoke(new Form1.MessageReceivedHandler(DisplayMessageReceived), message);
         }
         private void DisplayMessageReceived(string message)
         {
+            // Handle commands from the server
+            //  server was closed
             if (message.StartsWith("[SERVER_CLOSED]"))
             {
                 LblStatus.Text = "Server closed.";
@@ -149,6 +158,7 @@ namespace SocketClient
                 readThread = null;
                 isLoggedIn = false;
                 ShowControls();
+                // the client was authenticated
             } else if (message.StartsWith("[@" + user + "]"))
             {
                 LblStatus.Text = message.Replace("[@" + user + "] ", "");
@@ -160,13 +170,17 @@ namespace SocketClient
                 }
             }
         }
+        // End Display Message Received
 
-        private void button1_Click(object sender, EventArgs e)
+
+        // Open the player
+        private void BtnPlayer_Click(object sender, EventArgs e)
         {
             var player = new player.Player();
             player.Show();
         }
 
+        // Reading server messages - thread
         void Read()
         {
             byte[] buffer   = new byte[8196];

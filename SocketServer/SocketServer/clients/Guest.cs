@@ -4,6 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * Guest.cs
+ * 30010353
+ */
+
 namespace SocketServer.clients
 {
     class Guest : Client

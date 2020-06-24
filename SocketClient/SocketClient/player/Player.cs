@@ -526,6 +526,7 @@ namespace SocketClient.player
                     }
                     // remove the selected media from playlist
                     selectedPlaylist.Remove(media);
+                    UpdatePlaylist();
                 }
             }
         }

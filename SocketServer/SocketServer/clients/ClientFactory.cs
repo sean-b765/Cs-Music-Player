@@ -5,21 +5,15 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * ClientFactory.cs - static methods relating to Client creation and hash/salt validation and generation
+ * 30010353
+ */
+
 namespace SocketServer.clients
 {
     class ClientFactory
     {
-        public static RegisteredClient ConvertToRegistered(Guest client)
-        {
-            RegisteredClient returnClient;
-
-            return returnClient = new RegisteredClient() {
-                Hash = client.Hash,
-                Salt = client.Salt,
-                User = client.User
-            };       
-        }
-
         // Client factory methods
 
         public static AdminClient NewAdmin(string user, string pass)

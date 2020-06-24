@@ -27,6 +27,8 @@ namespace SocketServer
         Server.ClientConnectedHandler clientConnected;
         Server.UpdateUIHandler updateUI;
 
+        // Default Constructor
+        //  must pass events from Server.cs when a client connects.
         public SocketClient(Socket clientSocket, Server server, Server.MessageReceivedHandler messageReceived, 
             Server.ClientDisconnectedHandler clientDisconnected, Server.ClientConnectedHandler clientConnected,
             Server.UpdateUIHandler updateUI)
@@ -73,6 +75,7 @@ namespace SocketServer
                             // attempt login with the user,pass string
                             AttemptLogin(user_pass);
                         }
+                        // trigger server message received from client
                         messageReceived(data);
                     }
                 } catch (Exception)
@@ -81,6 +84,7 @@ namespace SocketServer
                 }
             } // end of Client connection
 
+            // trigger client disconnected event
             if (clientDisconnected != null && client != null)
                 clientDisconnected(client);
 
