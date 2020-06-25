@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 /*
  * Playlist.cs - contains the SortedSet<> binary tree which stores Media objects,
  *                  and relevant methods
- * 30010353
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketClient.player

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 /*
  * Media.cs - the media files imported by user (mp3, mp4, etc.)
- * 30010353
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketClient.player

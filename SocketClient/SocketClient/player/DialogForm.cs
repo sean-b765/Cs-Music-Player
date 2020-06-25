@@ -9,6 +9,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+/*
+ * DialogForm.cs - custom message box
+ * Author: Sean Boaden | 30010353
+ */
 
 namespace SocketClient.player
 {

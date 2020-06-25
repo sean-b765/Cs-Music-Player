@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 /*
  * SortByArtist.cs - custom Artist field comparer
- * 30010353
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketClient.player.comparators

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 /*
  * AdminClient.cs
- * 30010353
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketServer.clients
