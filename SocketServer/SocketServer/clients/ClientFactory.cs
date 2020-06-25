@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 /*
  * ClientFactory.cs - static methods relating to Client creation and hash/salt validation and generation
- * 30010353
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketServer.clients

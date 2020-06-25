@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 /*
  *  MergeSort.cs
  *   generic merge sort algorithm which incorporates custom comparers
- *  30010353
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketClient.player.algorithms

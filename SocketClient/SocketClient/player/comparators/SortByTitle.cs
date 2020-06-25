@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 /*
  * SortByTitle.cs - custom Title comparer
- * 30010353
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketClient.player.comparators

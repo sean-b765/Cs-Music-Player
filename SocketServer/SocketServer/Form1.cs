@@ -15,9 +15,10 @@ using System.Windows.Forms;
 /*
  * Programming III
  * AT3 Project
- * by Sean Boaden | 30010353
  * 
- * Form1.cs
+ * Author: Sean Boaden | 30010353
+ * 
+ * Form1.cs - Server Part
  */
 
 namespace SocketServer
@@ -34,6 +35,7 @@ namespace SocketServer
             this.FormClosed += Form1_FormClosed;
         }
 
+        // Form load event contains nothing
         private void Form1_Load(object sender, EventArgs e)
         {  }
 

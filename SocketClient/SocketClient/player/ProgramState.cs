@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 /*
  * ProgramState.cs
  *  contains all data to serialize on Player close, in one object
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketClient.player

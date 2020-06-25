@@ -20,7 +20,7 @@ using System.Diagnostics;
 /*
  * Player.cs - uses Windows Media Player (WMPLib) to play media files
  * 
- * 30010353
+ * Author: Sean Boaden | 30010353
  */
 
 namespace SocketClient.player

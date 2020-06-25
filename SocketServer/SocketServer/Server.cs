@@ -11,7 +11,8 @@ using SocketServer.clients;
 /*
  * Programming III
  * AT3 Project
- * by Sean Boaden | 30010353
+ * 
+ * Author: Sean Boaden | 30010353
  * 
  * Server.cs
  */

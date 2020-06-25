@@ -11,15 +11,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * Programming III
+ * AT3 Project
+ * 
+ * Author: Sean Boaden | 30010353
+ * 
+ * Form1.cs - Client part
+ */
+
 namespace SocketClient
 {
     public partial class Form1 : Form
     {
         Socket socket = null;
 
+        // Message received by server event
         public delegate void MessageReceivedHandler(string message);
         public event MessageReceivedHandler MessageReceived;
 
+        // global Thread object for Read() method
         Thread readThread = null;
 
         string user = "", pass = "";
@@ -31,6 +42,7 @@ namespace SocketClient
             MessageReceived += Form1_MessageReceived;
         }
 
+        // On form load, hide login controls (until connected)
         private void Form1_Load(object sender, EventArgs e)
         {
             loginPanel.Visible = false;
