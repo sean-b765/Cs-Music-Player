@@ -1,6 +1,8 @@
 # C-sharp Media Player
 **To view test demonstration** look at docs/README.md markdown file.
 
-Server program must be running to access Media Player.
+**Media Player**.
+![Snapshot of Media Player](docs/screencaps/figure2.gif)
 
-Connect in Client program via default user / pass : **admin** / **admin**
+Connect to the Server in the Client program via default : **admin** / **admin**
+![Snapshot of Client-Server](docs/screencaps/correct%20login.png)
