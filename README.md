@@ -1,4 +1,4 @@
-# C-sharp Media Player
+# C# Media Player
 **To view test demonstration** look at docs/README.md markdown file.
 
 **Media Player**
